@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha de Lectura Universitaria</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink: #1a1410;
+    --paper: #f5f0e8;
+    --paper-dark: #ede7d9;
+    --accent: #8b3a2a;
+    --accent-light: #c4593f;
+    --gold: #b8902a;
+    --muted: #6b5e50;
+    --line: #d4c9b8;
+    --shadow: rgba(26,20,16,0.12);
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #2c2318;
+    min-height: 100vh;
+    padding: 2rem 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* Background texture */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(255,255,255,0.015) 2px,
+      rgba(255,255,255,0.015) 4px
+    );
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .page-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .page-header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.8rem, 5vw, 3rem);
+    color: var(--paper);
+    letter-spacing: 0.02em;
+    line-height: 1.1;
+  }
+
+  .page-header h1 em {
+    font-style: italic;
+    color: var(--gold);
+  }
+
+  .page-header p {
+    color: var(--muted);
+    font-size: 0.85rem;
+    margin-top: 0.5rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .card {
+    background: var(--paper);
+    width: 100%;
+    max-width: 860px;
+    border-radius: 2px;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.5), 0 4px 16px rgba(0,0,0,0.3);
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+  }
+
+  /* Decorative top band */
+  .card::before {
+    content: '';
+    display: block;
+    height: 6px;
+    background: linear-gradient(90deg, var(--accent) 0%, var(--gold) 50%, var(--accent) 100%);
+  }
+
+  .card-inner {
+    padding: 2.5rem 3rem;
+  }
+
+  /* Progress bar */
+  .progress-bar {
+    height: 3px;
+    background: var(--line);
+    border-radius: 2px;
+    margin-bottom: 2.5rem;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--gold));
+    width: 0%;
+    transition: width 0.5s ease;
+    border-radius: 2px;
+  }
+
+  /* Section */
+  .section {
+    margin-bottom: 2rem;
+    animation: fadeUp 0.4s ease both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .section-number {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.7rem;
+    color: var(--accent);
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    background: rgba(139,58,42,0.08);
+    border: 1px solid rgba(139,58,42,0.2);
+    padding: 2px 8px;
+    border-radius: 1px;
+    white-space: nowrap;
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.05rem;
+    color: var(--ink);
+    font-weight: 700;
+  }
+
+  .section-icon {
+    margin-left: auto;
+    font-size: 1rem;
+    opacity: 0.5;
+  }
+
+  /* Fields */
+  .field-grid {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .field-grid.cols-2 { grid-template-columns: 1fr 1fr; }
+  .field-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  label {
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: var(--muted);
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+  }
+
+  input[type="text"],
+  input[type="number"],
+  select,
+  textarea {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.88rem;
+    color: var(--ink);
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 1px;
+    padding: 0.55rem 0.75rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+    width: 100%;
+  }
+
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(139,58,42,0.1);
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 80px;
+    line-height: 1.6;
+  }
+
+  textarea.tall { min-height: 120px; }
+  textarea.short { min-height: 60px; }
+
+  select {
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b5e50' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    padding-right: 2rem;
+  }
+
+  /* Star rating */
+  .star-rating {
+    display: flex;
+    gap: 0.25rem;
+    align-items: center;
+    padding: 0.4rem 0;
+  }
+
+  .star {
+    font-size: 1.4rem;
+    cursor: pointer;
+    color: var(--line);
+    transition: color 0.15s, transform 0.15s;
+    line-height: 1;
+  }
+
+  .star:hover, .star.active { color: var(--gold); }
+  .star:hover { transform: scale(1.2); }
+
+  /* Tag input */
+  .tags-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    padding: 0.4rem;
+    background: white;
+    border: 1px solid var(--line);
+    min-height: 44px;
+    cursor: text;
+    border-radius: 1px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    align-items: center;
+  }
+
+  .tags-container:focus-within {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(139,58,42,0.1);
+  }
+
+  .tag {
+    background: rgba(139,58,42,0.1);
+    color: var(--accent);
+    border: 1px solid rgba(139,58,42,0.2);
+    padding: 2px 8px 2px 10px;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-weight: 500;
+  }
+
+  .tag button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--accent);
+    font-size: 0.9rem;
+    line-height: 1;
+    padding: 0;
+    opacity: 0.6;
+    transition: opacity 0.15s;
+  }
+
+  .tag button:hover { opacity: 1; }
+
+  .tag-input {
+    border: none;
+    outline: none;
+    font-size: 0.85rem;
+    min-width: 120px;
+    color: var(--ink);
+    font-family: 'DM Sans', sans-serif;
+    padding: 2px 4px;
+    background: transparent;
+  }
+
+  /* Citas repeater */
+  .quotes-list { display: flex; flex-direction: column; gap: 0.75rem; }
+
+  .quote-item {
+    background: white;
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--accent);
+    padding: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    position: relative;
+    animation: fadeUp 0.3s ease;
+  }
+
+  .quote-item textarea { background: var(--paper); border-color: transparent; min-height: 56px; }
+  .quote-item textarea:focus { border-color: var(--accent); background: white; }
+
+  .quote-meta { display: grid; grid-template-columns: 1fr 80px; gap: 0.5rem; }
+  .quote-meta input { background: var(--paper); border-color: transparent; }
+  .quote-meta input:focus { border-color: var(--accent); background: white; }
+
+  .quote-remove {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    background: none;
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 0.9rem;
+    opacity: 0.5;
+    transition: opacity 0.15s, color 0.15s;
+    padding: 2px 5px;
+  }
+
+  .quote-remove:hover { opacity: 1; color: var(--accent); }
+
+  .add-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--accent);
+    background: none;
+    border: 1px dashed rgba(139,58,42,0.3);
+    padding: 0.4rem 0.9rem;
+    cursor: pointer;
+    border-radius: 1px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    transition: background 0.15s, border-color 0.15s;
+    margin-top: 0.5rem;
+  }
+
+  .add-btn:hover {
+    background: rgba(139,58,42,0.06);
+    border-color: var(--accent);
+  }
+
+  /* Divider */
+  .divider {
+    height: 1px;
+    background: var(--line);
+    margin: 2rem 0;
+    position: relative;
+  }
+
+  .divider::before {
+    content: '✦';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--paper);
+    color: var(--gold);
+    padding: 0 0.75rem;
+    font-size: 0.6rem;
+  }
+
+  /* Nivel dificultad */
+  .difficulty-selector {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .diff-option {
+    flex: 1;
+    text-align: center;
+    padding: 0.5rem;
+    border: 1px solid var(--line);
+    cursor: pointer;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--muted);
+    transition: all 0.2s;
+    border-radius: 1px;
+    background: white;
+  }
+
+  .diff-option:hover { border-color: var(--accent); color: var(--accent); }
+  .diff-option.selected { background: var(--accent); color: white; border-color: var(--accent); }
+  .diff-option.selected.med { background: var(--gold); border-color: var(--gold); }
+  .diff-option.selected.hard { background: var(--ink); border-color: var(--ink); }
+
+  /* Completion badge */
+  .completion-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+  }
+
+  .completion-pct {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--accent);
+  }
+
+  /* Buttons */
+  .actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--line);
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.65rem 1.5rem;
+    border-radius: 1px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 1px solid;
+  }
+
+  .btn-outline {
+    background: transparent;
+    color: var(--muted);
+    border-color: var(--line);
+  }
+
+  .btn-outline:hover {
+    background: var(--paper-dark);
+    color: var(--ink);
+    border-color: var(--ink);
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+  }
+
+  .btn-primary:hover {
+    background: #7a3325;
+  }
+
+  .btn-secondary {
+    background: var(--ink);
+    color: var(--paper);
+    border-color: var(--ink);
+  }
+
+  .btn-secondary:hover { background: #2d2018; }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    background: var(--ink);
+    color: var(--paper);
+    padding: 0.75rem 1.5rem;
+    border-radius: 2px;
+    font-size: 0.83rem;
+    z-index: 100;
+    transform: translateY(100px);
+    opacity: 0;
+    transition: all 0.3s ease;
+    border-left: 3px solid var(--gold);
+  }
+
+  .toast.show { transform: translateY(0); opacity: 1; }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    .card-inner { padding: 1.5rem 1.25rem; }
+    .field-grid.cols-2, .field-grid.cols-3 { grid-template-columns: 1fr; }
+    .quote-meta { grid-template-columns: 1fr; }
+    .actions { flex-direction: column; }
+    .btn { text-align: center; }
+  }
+
+  /* Print */
+  @media print {
+    body { background: white; padding: 0; }
+    .card { box-shadow: none; }
+    .card::before { display: none; }
+    .actions { display: none; }
+    .progress-bar { display: none; }
+    .add-btn { display: none; }
+    .quote-remove { display: none; }
+    input, textarea, select {
+      border: 1px solid #ccc !important;
+      box-shadow: none !important;
+    }
+  }
+</style>
+</head>
+<body>
+
+<header class="page-header">
+  <h1>Ficha de <em>Lectura</em></h1>
+  <p>Registro académico · Análisis crítico · Material de estudio</p>
+</header>
+
+<div class="card">
+  <div class="card-inner">
+
+    <!-- Progress -->
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem;">
+      <div class="completion-badge">
+        <span>Completado:</span>
+        <span class="completion-pct" id="pctDisplay">0%</span>
+      </div>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+
+    <!-- 1. Identificación bibliográfica -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-number">I</span>
+        <span class="section-title">Identificación Bibliográfica</span>
+        <span class="section-icon">📖</span>
+      </div>
+      <div class="field-grid cols-2">
+        <div class="field">
+          <label>Título completo</label>
+          <input type="text" placeholder="Título de la obra o artículo" data-track>
+        </div>
+        <div class="field">
+          <label>Autor / es</label>
+          <input type="text" placeholder="Apellido, Nombre" data-track>
+        </div>
+        <div class="field">
+          <label>Año de publicación</label>
+          <input type="number" placeholder="2024" min="1800" max="2099" data-track>
+        </div>
+        <div class="field">
+          <label>Editorial / Revista</label>
+          <input type="text" placeholder="Nombre de la editorial o revista" data-track>
+        </div>
+        <div class="field">
+          <label>Tipo de texto</label>
+          <select data-track>
+            <option value="">Seleccionar…</option>
+            <option>Artículo científico</option>
+            <option>Capítulo de libro</option>
+            <option>Libro completo</option>
+            <option>Ensayo</option>
+            <option>Tesis / Disertación</option>
+            <option>Reporte técnico</option>
+            <option>Ponencia / Conferencia</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Área disciplinar</label>
+          <select data-track>
+            <option value="">Seleccionar…</option>
+            <option>Ciencias Sociales</option>
+            <option>Humanidades</option>
+            <option>Ciencias Exactas</option>
+            <option>Ciencias de la Salud</option>
+            <option>Derecho</option>
+            <option>Economía y Administración</option>
+            <option>Ingeniería y Tecnología</option>
+            <option>Educación</option>
+            <option>Arte y Diseño</option>
+            <option>Otra</option>
+          </select>
+        </div>
+        <div class="field" style="grid-column: 1/-1;">
+          <label>URL / DOI (opcional)</label>
+          <input type="text" placeholder="https:// o doi:10.xxxx/..." data-track>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- 2. Comprensión del contenido -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-number">II</span>
+        <span class="section-title">Comprensión del Contenido</span>
+        <span class="section-icon">🧠</span>
+      </div>
+      <div class="field-grid">
+        <div class="field">
+          <label>Tesis central o idea principal</label>
+          <textarea placeholder="¿Cuál es el argumento principal que el autor sostiene a lo largo del texto?" data-track></textarea>
+        </div>
+        <div class="field">
+          <label>Ideas secundarias y argumentos de apoyo</label>
+          <textarea class="tall" placeholder="Lista los argumentos que sustentan la tesis central…" data-track></textarea>
+        </div>
+        <div class="field">
+          <label>Resumen ejecutivo</label>
+          <textarea class="tall" placeholder="Síntesis del texto en tus propias palabras (150–200 palabras aprox.)…" data-track></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- 3. Conceptos clave -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-number">III</span>
+        <span class="section-title">Vocabulario y Conceptos Clave</span>
+        <span class="section-icon">🔑</span>
+      </div>
+      <div class="field-grid">
+        <div class="field">
+          <label>Términos clave (escribe y presiona Enter o coma)</label>
+          <div class="tags-container" id="tagsContainer">
+            <input class="tag-input" id="tagInput" type="text" placeholder="Añadir término…">
+          </div>
+        </div>
+        <div class="field">
+          <label>Definiciones y conceptos centrales</label>
+          <textarea class="tall" placeholder="Término: definición según el autor o fuente consultada…" data-track></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- 4. Análisis crítico -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-number">IV</span>
+        <span class="section-title">Análisis Crítico</span>
+        <span class="section-icon">🔍</span>
+      </div>
+      <div class="field-grid">
+        <div class="field">
+          <label>Postura del autor e intención comunicativa</label>
+          <textarea placeholder="¿Desde qué perspectiva escribe? ¿A qué audiencia se dirige?" data-track></textarea>
+        </div>
+        <div class="field">
+          <label>Marco teórico o corriente de pensamiento</label>
+          <textarea placeholder="¿En qué tradición intelectual se inscribe el texto?" data-track></textarea>
+        </div>
+        <div class="field cols-2">
+          <label>Fortalezas del texto</label>
+          <textarea class="short" placeholder="Aspectos sólidos, bien fundamentados o innovadores…" data-track></textarea>
+        </div>
+        <div class="field">
+          <label>Limitaciones o puntos débiles</label>
+          <textarea class="short" placeholder="Vacíos, sesgos, omisiones o aspectos discutibles…" data-track></textarea>
+        </div>
+        <div class="field">
+          <label>Relación con otros autores o textos</label>
+          <textarea placeholder="¿Dialoga, contradice o complementa a otros autores del área?" data-track></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- 5. Citas relevantes -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-number">V</span>
+        <span class="section-title">Citas Relevantes</span>
+        <span class="section-icon">💬</span>
+      </div>
+      <p style="font-size:0.78rem;color:var(--muted);margin-bottom:1rem;letter-spacing:0.02em;">Registra las citas textuales más importantes con su contexto y relevancia.</p>
+      <div class="quotes-list" id="quotesList">
+        <!-- Quotes added dynamically -->
+      </div>
+      <button class="add-btn" onclick="addQuote()">+ Agregar cita</button>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- 6. Preguntas generadas -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-number">VI</span>
+        <span class="section-title">Preguntas Generadas</span>
+        <span class="section-icon">❓</span>
+      </div>
+      <div class="field-grid">
+        <div class="field">
+          <label>Dudas surgidas durante la lectura</label>
+          <textarea placeholder="Aspectos que no quedaron claros o que requieren profundización…" data-track></textarea>
+        </div>
+        <div class="field">
+          <label>Preguntas para discusión en clase o seminario</label>
+          <textarea placeholder="Temas debatibles, paradojas o puntos de tensión en el texto…" data-track></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- 7. Aplicación y conexiones -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-number">VII</span>
+        <span class="section-title">Aplicación y Conexiones</span>
+        <span class="section-icon">🔗</span>
+      </div>
+      <div class="field-grid">
+        <div class="field">
+          <label>Relación con el curso o asignatura</label>
+          <input type="text" placeholder="Nombre del curso / unidad temática" data-track>
+        </div>
+        <div class="field">
+          <label>Aplicaciones prácticas o ejemplos reales</label>
+          <textarea placeholder="¿Cómo se puede aplicar este conocimiento en contextos concretos?" data-track></textarea>
+        </div>
+        <div class="field">
+          <label>Conexión con lecturas anteriores</label>
+          <textarea class="short" placeholder="Textos que complementan, contradicen o amplían este material…" data-track></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- 8. Valoración personal -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-number">VIII</span>
+        <span class="section-title">Valoración Personal</span>
+        <span class="section-icon">⭐</span>
+      </div>
+      <div class="field-grid">
+        <div class="field">
+          <label>Relevancia para tu investigación o trabajo</label>
+          <div class="star-rating" id="relevanceStars">
+            <span class="star" data-val="1" onclick="setStars('relevance',1)">★</span>
+            <span class="star" data-val="2" onclick="setStars('relevance',2)">★</span>
+            <span class="star" data-val="3" onclick="setStars('relevance',3)">★</span>
+            <span class="star" data-val="4" onclick="setStars('relevance',4)">★</span>
+            <span class="star" data-val="5" onclick="setStars('relevance',5)">★</span>
+            <span style="font-size:0.75rem;color:var(--muted);margin-left:0.5rem;" id="relevanceLabel"></span>
+          </div>
+        </div>
+        <div class="field">
+          <label>Dificultad de lectura</label>
+          <div class="difficulty-selector">
+            <div class="diff-option easy" onclick="setDiff('easy', this)">Fácil</div>
+            <div class="diff-option med" onclick="setDiff('med', this)">Moderada</div>
+            <div class="diff-option hard" onclick="setDiff('hard', this)">Difícil</div>
+          </div>
+        </div>
+        <div class="field">
+          <label>Opinión argumentada sobre el texto</label>
+          <textarea placeholder="¿Qué aporta este texto a tu formación académica? ¿Estás de acuerdo con los planteamientos?" data-track></textarea>
+        </div>
+        <div class="field">
+          <label>Utilidad para trabajos o proyectos futuros</label>
+          <textarea class="short" placeholder="¿En qué trabajos, tesis o proyectos podrías citar o retomar este texto?" data-track></textarea>
+        </div>
+        <div class="field">
+          <label>Estado de lectura</label>
+          <select data-track>
+            <option value="">Seleccionar…</option>
+            <option>📖 En proceso</option>
+            <option>✅ Completada</option>
+            <option>🔄 Requiere relectura</option>
+            <option>📌 Guardada para después</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="actions">
+      <button class="btn btn-outline" onclick="clearForm()">Limpiar ficha</button>
+      <button class="btn btn-outline" onclick="window.print()">🖨 Imprimir</button>
+      <button class="btn btn-secondary" onclick="saveForm()">💾 Guardar borrador</button>
+      <button class="btn btn-primary" onclick="exportText()">↗ Exportar como texto</button>
+    </div>
+
+  </div><!-- /card-inner -->
+</div><!-- /card -->
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ─── Tags ─────────────────────────────────────────────
+const tagsContainer = document.getElementById('tagsContainer');
+const tagInput = document.getElementById('tagInput');
+const tags = [];
+
+tagsContainer.addEventListener('click', () => tagInput.focus());
+
+tagInput.addEventListener('keydown', e => {
+  if ((e.key === 'Enter' || e.key === ',') && tagInput.value.trim()) {
+    e.preventDefault();
+    addTag(tagInput.value.trim().replace(/,$/, ''));
+    tagInput.value = '';
+  } else if (e.key === 'Backspace' && !tagInput.value && tags.length) {
+    removeTag(tags.length - 1);
+  }
+});
+
+function addTag(text) {
+  if (!text || tags.includes(text)) return;
+  tags.push(text);
+  const tag = document.createElement('div');
+  tag.className = 'tag';
+  tag.innerHTML = `${text} <button onclick="removeTag(${tags.length-1})" title="Eliminar">×</button>`;
+  tagsContainer.insertBefore(tag, tagInput);
+  updateProgress();
+}
+
+function removeTag(i) {
+  tags.splice(i, 1);
+  renderTags();
+}
+
+function renderTags() {
+  Array.from(tagsContainer.querySelectorAll('.tag')).forEach(t => t.remove());
+  tags.forEach((text, i) => {
+    const tag = document.createElement('div');
+    tag.className = 'tag';
+    tag.innerHTML = `${text} <button onclick="removeTag(${i})" title="Eliminar">×</button>`;
+    tagsContainer.insertBefore(tag, tagInput);
+  });
+}
+
+// ─── Quotes ───────────────────────────────────────────
+let quoteCount = 0;
+function addQuote() {
+  quoteCount++;
+  const id = quoteCount;
+  const list = document.getElementById('quotesList');
+  const item = document.createElement('div');
+  item.className = 'quote-item';
+  item.id = `quote-${id}`;
+  item.innerHTML = `
+    <button class="quote-remove" onclick="removeQuote(${id})" title="Eliminar cita">✕</button>
+    <textarea placeholder="«Copia aquí la cita textual del autor…»" data-track></textarea>
+    <div class="quote-meta">
+      <input type="text" placeholder="Por qué es relevante esta cita…" data-track>
+      <input type="text" placeholder="Pág. 42">
+    </div>`;
+  list.appendChild(item);
+  updateProgress();
+}
+
+function removeQuote(id) {
+  const el = document.getElementById(`quote-${id}`);
+  if (el) el.remove();
+  updateProgress();
+}
+
+// Add one default quote
+addQuote();
+
+// ─── Stars ────────────────────────────────────────────
+const stars = { relevance: 0 };
+const labels = ['','Muy baja','Baja','Moderada','Alta','Imprescindible'];
+
+function setStars(type, val) {
+  stars[type] = val;
+  const container = document.getElementById(`${type}Stars`);
+  container.querySelectorAll('.star').forEach((s, i) => {
+    s.classList.toggle('active', i < val);
+  });
+  const lbl = document.getElementById(`${type}Label`);
+  if (lbl) lbl.textContent = labels[val] || '';
+  updateProgress();
+}
+
+// ─── Difficulty ───────────────────────────────────────
+function setDiff(level, el) {
+  document.querySelectorAll('.diff-option').forEach(d => d.classList.remove('selected'));
+  el.classList.add('selected', level);
+}
+
+// ─── Progress ─────────────────────────────────────────
+function updateProgress() {
+  const tracked = document.querySelectorAll('[data-track]');
+  const filled = Array.from(tracked).filter(el => el.value.trim().length > 0).length;
+  const pct = Math.round((filled / tracked.length) * 100);
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('pctDisplay').textContent = pct + '%';
+}
+
+document.querySelectorAll('[data-track]').forEach(el => {
+  el.addEventListener('input', updateProgress);
+  el.addEventListener('change', updateProgress);
+});
+
+// ─── Clear ────────────────────────────────────────────
+function clearForm() {
+  if (!confirm('¿Deseas limpiar toda la ficha? Esta acción no se puede deshacer.')) return;
+  document.querySelectorAll('[data-track]').forEach(el => el.value = '');
+  tags.length = 0;
+  renderTags();
+  document.getElementById('quotesList').innerHTML = '';
+  quoteCount = 0;
+  addQuote();
+  stars.relevance = 0;
+  document.querySelectorAll('.star').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.diff-option').forEach(d => d.classList.remove('selected'));
+  updateProgress();
+  showToast('Ficha limpiada');
+}
+
+// ─── Save (localStorage) ─────────────────────────────
+function saveForm() {
+  const data = {};
+  document.querySelectorAll('[data-track]').forEach((el, i) => {
+    data[`field_${i}`] = el.value;
+  });
+  data.tags = [...tags];
+  data.stars = stars.relevance;
+  try {
+    localStorage.setItem('ficha_lectura', JSON.stringify(data));
+    showToast('✓ Borrador guardado correctamente');
+  } catch(e) {
+    showToast('No se pudo guardar (almacenamiento no disponible)');
+  }
+}
+
+// Auto-restore
+try {
+  const saved = JSON.parse(localStorage.getItem('ficha_lectura') || 'null');
+  if (saved) {
+    document.querySelectorAll('[data-track]').forEach((el, i) => {
+      if (saved[`field_${i}`]) el.value = saved[`field_${i}`];
+    });
+    if (saved.tags) saved.tags.forEach(t => addTag(t));
+    if (saved.stars) setStars('relevance', saved.stars);
+    updateProgress();
+  }
+} catch(e) {}
+
+// ─── Export ───────────────────────────────────────────
+function exportText() {
+  const fields = document.querySelectorAll('[data-track]');
+  const sections = [
+    'FICHA DE LECTURA UNIVERSITARIA',
+    '================================\n',
+    '[ I. IDENTIFICACIÓN BIBLIOGRÁFICA ]',
+    `Título: ${fields[0]?.value || '—'}`,
+    `Autor/es: ${fields[1]?.value || '—'}`,
+    `Año: ${fields[2]?.value || '—'}`,
+    `Editorial/Revista: ${fields[3]?.value || '—'}`,
+    `Tipo de texto: ${fields[4]?.value || '—'}`,
+    `Área disciplinar: ${fields[5]?.value || '—'}`,
+    `URL/DOI: ${fields[6]?.value || '—'}`,
+    '\n[ II. COMPRENSIÓN DEL CONTENIDO ]',
+    `Tesis central:\n${fields[7]?.value || '—'}`,
+    `Ideas secundarias:\n${fields[8]?.value || '—'}`,
+    `Resumen ejecutivo:\n${fields[9]?.value || '—'}`,
+    '\n[ III. VOCABULARIO Y CONCEPTOS CLAVE ]',
+    `Términos clave: ${tags.join(', ') || '—'}`,
+    `Definiciones:\n${fields[10]?.value || '—'}`,
+    '\n[ IV. ANÁLISIS CRÍTICO ]',
+    `Postura del autor:\n${fields[11]?.value || '—'}`,
+    `Marco teórico:\n${fields[12]?.value || '—'}`,
+    `Fortalezas:\n${fields[13]?.value || '—'}`,
+    `Limitaciones:\n${fields[14]?.value || '—'}`,
+    `Relación con otros autores:\n${fields[15]?.value || '—'}`,
+    '\n[ VIII. VALORACIÓN PERSONAL ]',
+    `Relevancia: ${'★'.repeat(stars.relevance)}${'☆'.repeat(5-stars.relevance)}`,
+  ];
+
+  const blob = new Blob([sections.join('\n')], { type: 'text/plain;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  const titulo = fields[0]?.value.slice(0,30).replace(/\s/g,'_') || 'lectura';
+  a.download = `ficha_${titulo}.txt`;
+  a.click();
+  showToast('✓ Ficha exportada');
+}
+
+// ─── Toast ────────────────────────────────────────────
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+updateProgress();
+</script>
+</body>
+</html>
